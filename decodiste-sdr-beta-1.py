@@ -115,7 +115,7 @@ idusb20 = AppareilUsb(0x0bda, 0x2838, "E4000 ou FC0012",   "ezcap USB 2.0 DVB-T/
 idusb21 = AppareilUsb(0x0000, 0x0000, "introuvable",       "introuvable", "#####################", "") 
 
 appareils = [idusb01,idusb02, idusb03, idusb04, idusb05, idusb06, idusb07, idusb08, idusb09, idusb10, idusb11, idusb12, idusb13, idusb14, idusb15, idusb16, idusb17, idusb18, idusb19, idusb20, idusb21]
-app = NONE
+
 def interrogeusb():
      
     for appareil in appareils: 
