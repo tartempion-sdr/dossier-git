@@ -8,7 +8,8 @@ alt gr + 7 pour: ```
 discord
 discord```
 
-
+pip install pyrtlsdr
+pip install pyusb
 """
 
 #########################
@@ -17,7 +18,7 @@ discord```
 #  interface - sdr - 2  #
 #########################
 
-
+from rtlsdr import RtlSdr
 import threading
 import usb
 import time
@@ -113,70 +114,44 @@ idusb19 = AppareilUsb(0x0bda, 0x2838, "FC0012 ou E4000",   "Realtek Semiconducto
 idusb20 = AppareilUsb(0x0bda, 0x2838, "E4000 ou FC0012",   "ezcap USB 2.0 DVB-T/DAB/FM dongle" + "\n" "               ou Realtek Semiconductor Corp. RTL2838 DVB-T", "####################", "/") 
 idusb21 = AppareilUsb(0x0000, 0x0000, "introuvable",       "introuvable", "#####################", "") 
 
-appareil = {1: idusb01,   
-            2: idusb02, 
-            3: idusb03,
-            4: idusb04, 
-            5: idusb05,
-            6: idusb06, 
-            7: idusb07,
-            8: idusb08, 
-            9: idusb09,
-            10: idusb10, 
-            11: idusb11,   
-            12: idusb12, 
-            13: idusb13,
-            14: idusb14, 
-            15: idusb15,
-            16: idusb16, 
-            17: idusb17,
-            18: idusb18, 
-            19: idusb19,
-            20: idusb20,
-            21: idusb21,}
-
- 
-
-
+appareils = [idusb01,idusb02, idusb03, idusb04, idusb05, idusb06, idusb07, idusb08, idusb09, idusb10, idusb11, idusb12, idusb13, idusb14, idusb15, idusb16, idusb17, idusb18, idusb19, idusb20, idusb21]
+app = NONE
 def interrogeusb():
      
-    for key in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]: 
-        interroge = usb.core.find(idVendor=appareil[key].idvendeur, idProduct=appareil[key].idproducteur)
-        interroge
+    for appareil in appareils: 
+        interroge = usb.core.find(idVendor=appareil.idvendeur, idProduct=appareil.idproducteur)
+        
         if interroge is None:
         
             
             text1.delete("1.0","end")
-            text1.insert(INSERT, "Liste de Devices interogés ... " + " |" + str(appareil[key].keysymbole) + str(appareil[key].keysymbolefin) + "|"
+            text1.insert(INSERT, "Liste de Devices interogés ... " + " |" + str(appareil.keysymbole) + str(appareil.keysymbolefin) + "|"
             +  "\n" + "\n"
-            + " nombre de devices DVB-T interogé = " + str(key) + "\n" + "\n" )
+            + " nombre de devices DVB-T interogé = " + str(appareils.index(appareil)+1) + "\n" + "\n" )
             
-            text1.insert(INSERT,  " idvendeur = " + str(hex(appareil[key].idvendeur)) + "\n" 
-                            + " idproducteur = " + str(hex(appareil[key].idproducteur)) + "\n"    
-                            + " tunner = " + str(appareil[key].tunner) + "\n"  
-                            + " device name = " + str(appareil[key].devicename) + "\n" 
+            text1.insert(INSERT,  " idvendeur = " + str(hex(appareil.idvendeur)) + "\n" 
+                            + " idproducteur = " + str(hex(appareil.idproducteur)) + "\n"    
+                            + " tunner = " + str(appareil.tunner) + "\n"  
+                            + " device name = " + str(appareil.devicename) + "\n" 
                             + " Device DVB-T non trouvé ou incompatible" + "\n"  + "\n")
                               
         
 
-            time.sleep(1)
-             
-            key = key + 1     
+            time.sleep(1)  
+            
 
         else:
+            text1.delete("1.0","end")
+            text1.insert(INSERT, "====-> Device trouvé !! <-====" + "\n" + "\n")
+            text1.insert(INSERT,  " idvendeur = " + str(hex(appareil.idvendeur)) + "\n"   
+                            + " idproducteur = " + str(hex(appareil.idproducteur))+ "\n"    
+                            + " tunner = " + str(appareil.tunner) + "\n" + "\n"   
+                            + " device name = " + str(appareil.devicename) + "\n" + "\n" )
+                            
+            app = appareil
             break
 
-    if interroge is not None: 
-          
-        text1.delete("1.0","end")
-        text1.insert(INSERT, "====-> Device trouvé !! <-====" + "\n" + "\n")
-        text1.insert(INSERT,  " idvendeur = " + str(hex(appareil[key].idvendeur)) + "\n"   
-                            + " idproducteur = " + str(hex(appareil[key].idproducteur))+ "\n"    
-                            + " tunner = " + str(appareil[key].tunner) + "\n" + "\n"   
-                            + " device name = " + str(appareil[key].devicename) + "\n" + "\n" )
-                            
-        
-                
+
 
 thread1 = threading.Thread(target=interrogeusb)    
     
